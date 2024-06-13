@@ -1,6 +1,9 @@
+#include<windows.h>
+
 #include <opencv/highgui.h> ///使用 OpenCV 2.1 比較簡單, 只要用 High GUI 即可
 #include <opencv/cv.h>
- #include <GL/glut.h>
+#include <GL/glut.h>
+int id1, id2;
 int myTexture(char * filename)
 {
     IplImage * img = cvLoadImage(filename); ///OpenCV讀圖
@@ -345,14 +348,47 @@ void mouse(int button,int state,int x, int y){
     oldX=x;
     oldY=y;
 }
-
+float oldAngleX[20] = {},newAngleX[20] = {};
+void timer(int t)
+{
+    printf("t:%d\n", t);
+    glutTimerFunc(50,timer,t+1);
+    if(t%20==0)
+    {
+        if(fin==NULL)fin = fopen("angle.txt","r");
+        for(int i =0 ;i<20;i++){
+            oldAngleX[i] = newAngleX[i];
+            fscanf(fin,"%f",&newAngleX[i]);
+        }
+    }
+    float alpha = (t%20)/20.0;
+    for(int i=0;i<20;i++)
+    {
+        angle[i] = newAngleX[i]*alpha + oldAngleX[i]*(1-alpha);
+    }
+    glutPostRedisplay();
+}
 void keyboard(unsigned char key,int x,int y){
-    if(key=='r'){
+    if(key=='p')
+    {
+        glutTimerFunc(0,timer,0);
+        PlaySound("data/music.wav",NULL,SND_ASYNC);
+    }
+    if(key=='a'){
         if(fin==NULL) fin = fopen("angle.txt", "r");
         for(int i=0; i<20; i++){
             fscanf(fin,"%f", &angle[i]);
         }
         glutPostRedisplay();
+    }else  if(key=='s'){
+        if(fout==NULL) fout = fopen("angle.txt","w+");
+        for(int i=0;i<20;i++)
+        {
+            printf("%.1f ", angle[i]);
+            fprintf(fout,"%.1f " , angle[i]);
+        }
+        printf("\n");
+        fprintf(fout,"\n");
     }
     if(key=='0')angleID=0;
     if(key=='1')angleID=1;
@@ -364,31 +400,37 @@ void keyboard(unsigned char key,int x,int y){
     if(key=='7')angleID=7;
     if(key=='8')angleID=8;
     if(key=='9')angleID=9;
-    if(key=='a')angleID=10;
-    if(key=='s')angleID=11;
-    if(key=='d')angleID=12;
-    if(key=='f')angleID=13;
-    if(key=='g')angleID=14;
-    if(key=='h')angleID=15;
-    if(key=='j')angleID=16;
-    if(key=='k')angleID=17;
-    if(key=='l')angleID=18;
-    if(key=='z')angleID=19;
+    if(key=='q')angleID=10;
+    if(key=='w')angleID=11;
+    if(key=='e')angleID=12;
+    if(key=='r')angleID=13;
+    if(key=='d')angleID=14;
+    if(key=='f')angleID=15;
+    if(key=='t')angleID=16;
+    if(key=='g')angleID=17;
+    if(key=='h')angleID=18;
+    if(key=='y')angleID=19;
 }
 void display()
 {
-    glClearColor(1.0f, 1.0f, 1.0f, 1.0f); // 设置背景颜色为白色
-    glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT); // 清除颜色缓冲区和深度缓冲区
 
-    ///angle+=da;
-    ///if(angle>90)da=-1;
-    ///if(angle<0)da=+1;
-    glClear(GL_COLOR_BUFFER_BIT|GL_DEPTH_BUFFER_BIT);
-    glDisable(GL_TEXTURE_2D);
-    ///glutSolidSphere(0.1,30,30);
+    glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
     glEnable(GL_TEXTURE_2D);
-    glColor3f(1 ,1 ,1 );
+    glBindTexture(GL_TEXTURE_2D,id1);
+    glDisable(GL_LIGHTING);
+    glPushMatrix();
+        glTranslatef(0, 0, 0.9);
+        glBegin(GL_POLYGON);
+            glTexCoord2f(0,0); glVertex2f(-1,+1);
+            glTexCoord2f(0,1); glVertex2f(-1,-1);
+            glTexCoord2f(1,1); glVertex2f(+1,-1);
+            glTexCoord2f(1,0); glVertex2f(+1,+1);
+        glEnd();
+    glPopMatrix();
+    glEnable(GL_LIGHTING);
 
+    glEnable(GL_TEXTURE_2D);
+    glBindTexture(GL_TEXTURE_2D,id2);
     glPushMatrix();
         glTranslatef(0,0.35,0);
         glRotatef(angle[0],0,1,0);
@@ -464,7 +506,7 @@ void display()
                                 drawfootA3();
                         glPopMatrix();
                             glPushMatrix();
-                                glTranslatef(0,0.1,-0.05);
+                                glTranslatef(0,0.16,-0.03);
                                 glRotatef(angle[16],1,0,0);
                                 glTranslatef(0,0,-0.1);
                                 drawflyE();
@@ -542,8 +584,10 @@ const GLfloat high_shininess[] = { 100.0f };
 
 int main(int argc, char*argv[])
 {
+    //PlaySound("C:/music.wav",NULL,SND_ASYNC);
     glutInit(&argc, argv);
     glutInitDisplayMode(GLUT_DOUBLE|GLUT_DEPTH);
+    glutInitWindowSize(800, 600);
     glutCreateWindow("期末");
     glutDisplayFunc(display);
     glutIdleFunc(display); ///加這行, 讓它轉動
@@ -551,7 +595,8 @@ int main(int argc, char*argv[])
     glutMouseFunc(mouse);
     glutKeyboardFunc(keyboard);
 
-    //myTexture("data/Diffuse.jpg");
+    id1=myTexture("data/background.jpg");
+    id2=myTexture("data/1.jpg");
 
     glEnable(GL_DEPTH_TEST);
     glDepthFunc(GL_LESS);

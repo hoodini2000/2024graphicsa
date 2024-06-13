@@ -1,5 +1,5 @@
 # depslib dependency file v1.0
-1718170651 source:c:\users\jiachen\onedrive\桌面\期末\glm.cpp
+1718207463 source:c:\users\administrator\desktop\期末\glm.cpp
 	<math.h>
 	<stdio.h>
 	<stdlib.h>
@@ -7,13 +7,13 @@
 	<assert.h>
 	"glm.h"
 
-1718170651 c:\users\jiachen\onedrive\桌面\期末\glm.h
+1718207463 c:\users\administrator\desktop\期末\glm.h
 	<GL/glut.h>
 
-1716366191 c:\users\jiachen\onedrive\桌面\課程\freeglut\include\gl\glut.h
+1426320928 c:\users\administrator\desktop\freeglut\include\gl\glut.h
 	"freeglut_std.h"
 
-1716366191 c:\users\jiachen\onedrive\桌面\課程\freeglut\include\gl\freeglut_std.h
+1426320928 c:\users\administrator\desktop\freeglut\include\gl\freeglut_std.h
 	<windows.h>
 	<EGL/egl.h>
 	<GLES/gl.h>
@@ -24,7 +24,8 @@
 	<GL/glu.h>
 	<stdlib.h>
 
-1718202662 source:c:\users\jiachen\onedrive\桌面\期末\main.cpp
+1718274306 source:c:\users\administrator\desktop\期末\main.cpp
+	<windows.h>
 	<opencv/highgui.h>
 	<opencv/cv.h>
 	<GL/glut.h>
